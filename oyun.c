@@ -31,6 +31,7 @@ typedef struct{
   int savunma;
   int saglik;
   float kritiksans;
+  struct unit* next;
 }unit;
 typedef struct{
   char irk[10];
@@ -38,6 +39,7 @@ typedef struct{
   char bonusturu[20];
   char etkiledigibirim[30];
   float bonusdegeri;
+  struct hero* next;
 }hero;
 typedef struct{
   char irk[30];
@@ -57,12 +59,16 @@ struct MemoryStruct {
     size_t size;
 };
 void UnitJsonCek(char* array,unit* units);
+void unitjson(char arr[][50],int* tempj,int* tempk,unit* units);
 void UnitJsonAta(char* array,unit* units);
 void HeroJsonCek(char* array,hero* heroes);
+void herojson(char arr[][90],int* tempj,int* tempk,hero* heroes);
 void HeroJsonAta(char* array,hero* heroes);
 void CreatureJsonCek(char* array,creature* creatures);
+void creaturejson(char arr[][100],int* tempj,int* tempk,creature* creatures);
 void CreatureJsonAta(char* array,creature* creatures);
 void ResearchJsonCek(char* array,research* researches);
+void researchjson(char arr[][90],int* tempj,int* tempk,int* templ,research* researches);
 void ResearchJsonAta(char* array,research* researches);
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp);
 char* fetch_json_data(const char* url);
@@ -83,6 +89,7 @@ void AdimlariMetneYazmak(unit* units,human* insan,ork_* ork,int adim,float topla
 void GrafikCagir(unit* units,hero* heroes,creature* creature,human* insan,ork_* ork);
 int main(){
     unit* units = (unit*)malloc(8 * sizeof(unit));
+    //unit* units = malloc(sizeof(unit));
     hero* heroes = (hero*)malloc(9 * sizeof(hero));
     creature* creatures = (creature*)malloc(11 * sizeof(creature));
     research* researches = (research*)malloc(4 * sizeof(research));
@@ -156,6 +163,22 @@ void UnitJsonCek(char* array,unit* units){
     array[strlen(array)-1]='\0';
     UnitJsonAta(array,units);
 }
+void unitjson(char arr[][50],int* tempj,int* tempk,unit* units) {
+    int j = *tempj;
+    int k = *tempk;
+    j++;
+    if(strstr(arr[j],"saldiri")!=NULL)
+        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
+    if(strstr(arr[j],"savunma")!=NULL)
+        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
+    if(strstr(arr[j],"saglik")!=NULL)
+        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
+    if(strstr(arr[j],"kritik_sans")!=NULL)
+        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
+    k++;
+    *tempj = j;
+    *tempk = k;
+}
 void UnitJsonAta(char* array,unit* units){
     int i=0,j=0;
     char arr[52][50];
@@ -174,56 +197,20 @@ void UnitJsonAta(char* array,unit* units){
             do{
                 strcpy(units[k].irk,"insan");
                 if(strstr(arr[j],"piyadeler")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"piyadeler");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 if(strstr(arr[j],"okcular")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"okcular");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 if(strstr(arr[j],"suvariler")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"suvariler");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 if(strstr(arr[j],"kusatma_makineleri")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"kusatma_makineleri");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 j++;
             }while(strstr(arr[j],"ork_legi")==NULL && j<i);
@@ -233,56 +220,20 @@ void UnitJsonAta(char* array,unit* units){
             do{
                 strcpy(units[k].irk,"ork");
                 if(strstr(arr[j],"ork_dovusculeri")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"ork_dovusculeri");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 if(strstr(arr[j],"mizrakcilar")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"mizrakcilar");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 if(strstr(arr[j],"varg_binicileri")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"varg_binicileri");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 if(strstr(arr[j],"troller")!=NULL){
-                    j++;
                     strcpy(units[k].ad,"troller");
-                    if(strstr(arr[j],"saldiri")!=NULL)
-                        sscanf(arr[j++],"saldiri: %d",&(units[k].saldiri));
-                    if(strstr(arr[j],"savunma")!=NULL)
-                        sscanf(arr[j++],"savunma: %d",&(units[k].savunma));
-                    if(strstr(arr[j],"saglik")!=NULL)
-                        sscanf(arr[j++],"saglik: %d",&(units[k].saglik));
-                    if(strstr(arr[j],"kritik_sans")!=NULL)
-                        sscanf(arr[j++],"kritik_sans: %f",&(units[k].kritiksans));
-                    k++;
+                    unitjson(arr,&j,&k,units);
                 }
                 j++;
             }while(strstr(arr[j],"insan_imparatorlugu")==NULL && j<i);
@@ -303,6 +254,20 @@ void HeroJsonCek(char* array,hero* heroes){
     array[strlen(array)-1]='\0';
     HeroJsonAta(array,heroes);
 }
+void herojson(char arr[][90],int* tempj,int* tempk,hero* heroes) {
+    int j = *tempj;
+    int k = *tempk;
+    j++;
+    if(strstr(arr[j],"bonus_turu")!=NULL)
+        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
+    if(strstr(arr[j],"bonus_degeri")!=NULL)
+        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
+    if(strstr(arr[j],"aciklama")!=NULL)
+        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
+    k++;
+    *tempj = j;
+    *tempk = k;
+}
 void HeroJsonAta(char* array,hero* heroes){
     int i=0,j=0;
     char arr[56][90];
@@ -321,59 +286,24 @@ void HeroJsonAta(char* array,hero* heroes){
             do{
                 strcpy(heroes[k].irk,"insan");
                 if(strstr(arr[j],"Alparslan")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Alparslan");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 if(strstr(arr[j],"Mete_Han")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Mete_Han");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 if(strstr(arr[j],"Fatih_Sultan_Mehmet")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Fatih_Sultan_Mehmet");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 if(strstr(arr[j],"Yavuz_Sultan_Selim")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Yavuz_Sultan_Selim");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 if(strstr(arr[j],"Tugrul_Bey")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Tugrul_Bey");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 j++;
             }while(strstr(arr[j],"ork_legi")==NULL && j<i);
@@ -383,48 +313,20 @@ void HeroJsonAta(char* array,hero* heroes){
                 karakterKaldir(arr[j],'"');
                 strcpy(heroes[k].irk,"ork");
                 if(strstr(arr[j],"Goruk_Vahsi")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Goruk_Vahsi");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 if(strstr(arr[j],"Thruk_Kemikkiran")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Thruk_Kemikkiran");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 if(strstr(arr[j],"Vrog_Kafakiran")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Vrog_Kafakiran");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 if(strstr(arr[j],"Ugar_Zalim")!=NULL){
-                    j++;
                     strcpy(heroes[k].ad,"Ugar_Zalim");
-                    if(strstr(arr[j],"bonus_turu")!=NULL)
-                        sscanf(arr[j++],"bonus_turu: %s",&(heroes[k].bonusturu));
-                    if(strstr(arr[j],"bonus_degeri")!=NULL)
-                        sscanf(arr[j++],"bonus_degeri: %f",&(heroes[k].bonusdegeri));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(heroes[k].etkiledigibirim));
-                    k++;
+                    herojson(arr,&j,&k,heroes);
                 }
                 j++;
             }while(strstr(arr[j],"insan_imparatorlugu")==NULL && j<i);
@@ -445,6 +347,20 @@ void CreatureJsonCek(char* array,creature* creatures){
     array[strlen(array)-1]='\0';
     CreatureJsonAta(array,creatures);
 }
+void creaturejson(char arr[][100],int* tempj,int* tempk,creature* creatures) {
+    int j = *tempj;
+    int k = *tempk;
+    j++;
+    if(strstr(arr[j],"etki_degeri")!=NULL)
+        sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
+    if(strstr(arr[j],"etki_turu")!=NULL)
+        sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
+    if(strstr(arr[j],"aciklama")!=NULL)
+        sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
+    k++;
+    *tempj = j;
+    *tempk = k;
+}
 void CreatureJsonAta(char* array,creature* creatures){
     int i=0,j=0;
     char arr[70][100];
@@ -463,59 +379,24 @@ void CreatureJsonAta(char* array,creature* creatures){
             do{
                 strcpy(creatures[k].irk,"insan_canavari");
                 if(strstr(arr[j],"Ejderha")!=NULL){
-                    j++;
                     strcpy(creatures[k].ad,"Ejderha");
-                    if(strstr(arr[j],"etki_degeri")!=NULL)
-                        sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                    if(strstr(arr[j],"etki_turu")!=NULL)
-                        sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                    k++;
+                    creaturejson(arr,&j,&k,creatures);
                 }
                 if(strstr(arr[j],"Agri_Dagi_Devleri")!=NULL){
-                    j++;
                     strcpy(creatures[k].ad,"Agri_Dagi_Devleri");
-                    if(strstr(arr[j],"etki_degeri")!=NULL)
-                        sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                    if(strstr(arr[j],"etki_turu")!=NULL)
-                        sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                    k++;
+                    creaturejson(arr,&j,&k,creatures);
                 }
                 if(strstr(arr[j],"Tepegoz")!=NULL){
-                    j++;
                     strcpy(creatures[k].ad,"Tepegoz");
-                    if(strstr(arr[j],"etki_degeri")!=NULL)
-                        sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                    if(strstr(arr[j],"etki_turu")!=NULL)
-                        sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                    k++;
+                    creaturejson(arr,&j,&k,creatures);
                 }
                 if(strstr(arr[j],"Karakurt")!=NULL){
-                    j++;
                     strcpy(creatures[k].ad,"Karakurt");
-                    if(strstr(arr[j],"etki_degeri")!=NULL)
-                        sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                    if(strstr(arr[j],"etki_turu")!=NULL)
-                        sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                    k++;
+                    creaturejson(arr,&j,&k,creatures);
                 }
                 if(strstr(arr[j],"Samur")!=NULL){
-                    j++;
                     strcpy(creatures[k].ad,"Samur");
-                    if(strstr(arr[j],"etki_degeri")!=NULL)
-                        sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                    if(strstr(arr[j],"etki_turu")!=NULL)
-                        sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                    if(strstr(arr[j],"aciklama")!=NULL)
-                        sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                    k++;
+                    creaturejson(arr,&j,&k,creatures);
                 }
                 j++;
             }while(strstr(arr[j],"ork_legi")==NULL && j<i);
@@ -524,70 +405,28 @@ void CreatureJsonAta(char* array,creature* creatures){
             do{
             strcpy(creatures[k].irk,"ork_canavari");
             if(strstr(arr[j],"Kara_Troll")!=NULL){
-                j++;
                 strcpy(creatures[k].ad,"Kara_Troll");
-                if(strstr(arr[j],"etki_degeri")!=NULL)
-                    sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                if(strstr(arr[j],"etki_turu")!=NULL)
-                    sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                k++;
+                creaturejson(arr,&j,&k,creatures);
             }
             if(strstr(arr[j],"Golge_Kurtlari")!=NULL){
-                j++;
                 strcpy(creatures[k].ad,"Golge_Kurtlari");
-                if(strstr(arr[j],"etki_degeri")!=NULL)
-                    sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                if(strstr(arr[j],"etki_turu")!=NULL)
-                    sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                k++;
+                creaturejson(arr,&j,&k,creatures);
             }
             if(strstr(arr[j],"Camur_Devleri")!=NULL){
-                j++;
                 strcpy(creatures[k].ad,"Camur_Devleri");
-                if(strstr(arr[j],"etki_degeri")!=NULL)
-                    sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                if(strstr(arr[j],"etki_turu")!=NULL)
-                    sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                k++;
+                creaturejson(arr,&j,&k,creatures);
             }
             if(strstr(arr[j],"Ates_Iblisi")!=NULL){
-                j++;
                 strcpy(creatures[k].ad,"Ates_Iblisi");
-                if(strstr(arr[j],"etki_degeri")!=NULL)
-                    sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                if(strstr(arr[j],"etki_turu")!=NULL)
-                    sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                k++;
+                creaturejson(arr,&j,&k,creatures);
             }
-            if(strstr(arr[j],"Makrog_Savas_Beyi")!=NULL){
-                j++;
+            if(strstr(arr[j],"Makrog_Savas_Beyi")!=NULL) {
                 strcpy(creatures[k].ad,"Makrog_Savas_Beyi");
-                if(strstr(arr[j],"etki_degeri")!=NULL)
-                    sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                if(strstr(arr[j],"etki_turu")!=NULL)
-                    sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                k++;
+                creaturejson(arr,&j,&k,creatures);
             }
             if(strstr(arr[j],"Buz_Devleri")!=NULL){
-                j++;
                 strcpy(creatures[k].ad,"Buz_Devleri");
-                if(strstr(arr[j],"etki_degeri")!=NULL)
-                    sscanf(arr[j++],"etki_degeri: %f",&(creatures[k].etkidegeri));
-                if(strstr(arr[j],"etki_turu")!=NULL)
-                    sscanf(arr[j++],"etki_turu: %s",&(creatures[k].etkituru));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(creatures[k].etkiledigibirim));
-                k++;
+                creaturejson(arr,&j,&k,creatures);
             }
             j++;
             }while(strstr(arr[j],"insan_imparatorlugu")==NULL && j<i);
@@ -608,6 +447,33 @@ void ResearchJsonCek(char* array,research* researches){
     array[strlen(array)-1]='\0';
     ResearchJsonAta(array,researches);
 }
+void researchjson(char arr[][90],int* tempj,int* tempk,int* templ,research* researches) {
+    int j = *tempj;
+    int k = *tempk;
+    int l = *templ;
+    if(strstr(arr[j++],"seviye_1")!=NULL){
+        if(strstr(arr[j],"deger"))
+            sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
+        if(strstr(arr[j],"aciklama")!=NULL)
+            sscanf(arr[j++],"aciklama: %s",&(researches[k].etkiledigibirim));
+        j++;
+    }
+    if(strstr(arr[j++],"seviye_2")!=NULL){
+        if(strstr(arr[j],"deger"))
+            sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
+        j+=2;
+    }
+    if(strstr(arr[j++],"seviye_3")!=NULL){
+        if(strstr(arr[j],"deger"))
+            sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
+        j+=3;
+    }
+    k++;
+    l=0;
+    *tempj = j;
+    *tempk = k;
+    *templ = l;
+}
 void ResearchJsonAta(char* array,research* researches){
     int i=0,j=1;
     char arr[60][90];
@@ -625,94 +491,22 @@ void ResearchJsonAta(char* array,research* researches){
         if(strstr(arr[j++],"savunma_ustaligi")!=NULL){
             strcpy(researches[k].ad,"savunma_ustaligi");
             strcpy(researches[k].bonusturu,"savunma");
-            if(strstr(arr[j++],"seviye_1")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(researches[k].etkiledigibirim));
-                j++;
-            }
-            if(strstr(arr[j++],"seviye_2")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=2;
-            }
-            if(strstr(arr[j++],"seviye_3")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=3;
-            }
-            k++;
-            l=0;
+            researchjson(arr,&j,&k,&l,researches);
         }
         if(strstr(arr[j++],"saldiri_gelistirmesi")!=NULL){
             strcpy(researches[k].ad,"saldiri_gelistirmesi");
             strcpy(researches[k].bonusturu,"saldiri");
-            if(strstr(arr[j++],"seviye_1")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(researches[k].etkiledigibirim));
-                j++;
-            }
-            if(strstr(arr[j++],"seviye_2")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=2;
-            }
-            if(strstr(arr[j++],"seviye_3")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=3;
-            }
-            k++;
-            l=0;
+            researchjson(arr,&j,&k,&l,researches);
         }
         if(strstr(arr[j++],"elit_egitim")!=NULL){
             strcpy(researches[k].ad,"elit_egitim");
             strcpy(researches[k].bonusturu,"kritik_sans");
-            if(strstr(arr[j++],"seviye_1")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(researches[k].etkiledigibirim));
-                j++;
-            }
-            if(strstr(arr[j++],"seviye_2")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=2;
-            }
-            if(strstr(arr[j++],"seviye_3")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=3;
-            }
-            k++;
-            l=0;
+            researchjson(arr,&j,&k,&l,researches);
         }
         if(strstr(arr[j++],"kusatma_ustaligi")!=NULL){
             strcpy(researches[k].ad,"kusatma_ustaligi");
             strcpy(researches[k].bonusturu,"saldiri");
-            if(strstr(arr[j++],"seviye_1")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                if(strstr(arr[j],"aciklama")!=NULL)
-                    sscanf(arr[j++],"aciklama: %s",&(researches[k].etkiledigibirim));
-                j++;
-            }
-            if(strstr(arr[j++],"seviye_2")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=2;
-            }
-            if(strstr(arr[j++],"seviye_3")!=NULL){
-                if(strstr(arr[j],"deger"))
-                    sscanf(arr[j++],"deger: %f",&(researches[k].degerler[l++]));
-                j+=3;
-            }
-            k++;
-            l=0;
+            researchjson(arr,&j,&k,&l,researches);
         }
         j++;
     }
